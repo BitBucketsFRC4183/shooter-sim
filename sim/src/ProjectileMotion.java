@@ -1,8 +1,8 @@
 package src;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class ProjectileMotion extends JPanel{
 
@@ -11,11 +11,13 @@ public class ProjectileMotion extends JPanel{
     public void initComponents(){
         JFrame frame = new JFrame("Projectile Motion Simulation");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1920, 1080);
+        frame.setSize(900, 900);
         frame.setResizable(true);
+        frame.setTitle("Projectile Motion Simulation");
         frame.setLocationRelativeTo(null);
         frame.add(this);
         frame.setVisible(true);
+
         physics.setup();
     }
 
@@ -24,10 +26,9 @@ public class ProjectileMotion extends JPanel{
         Graphics2D g2 = (Graphics2D) g;
         g.setColor(Color.red);
 
-
-
         physics.draw(g2);
     }
+
 
 
     public static void main(String[] args){

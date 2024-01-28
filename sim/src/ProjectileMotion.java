@@ -25,6 +25,7 @@ public class ProjectileMotion extends JPanel{
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g.setColor(Color.red);
+        ((Graphics2D) g).scale(1, 1);
 
         physics.draw(g2);
     }

@@ -157,8 +157,7 @@ public class Simulation {
 
     }
 
-    public void drawOneCurve(Graphics2D g)
-    {
+    public void drawOneCurve(Graphics2D g) {
         for (int i = 0; i < 10000; i++) {
             g.fill(new Ellipse2D.Double(x, y, 3, 3));
             //g.fill(new Ellipse2D.Double(50, 70, 10, 10));

@@ -31,7 +31,6 @@ public class ProjectileMotion extends JPanel{
     }
 
 
-
     public static void main(String[] args){
         new ProjectileMotion().initComponents();
     }

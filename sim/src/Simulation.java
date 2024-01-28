@@ -217,14 +217,15 @@ public class Simulation {
 
         g.setColor(Color.BLUE);
 
-        double x = 20;
-        double y = 400;
-        double endX   = x + 40 * Math.sin(14);
-        double endY   = y + 40 * Math.cos(14);
+        double x = 20; //20, 4.72
+        double y = 400; //400, 598.12
+        //double hypotenuse = 47.36;
+        double endX = x + 47.36 * Math.cos(14*Math.PI/180);
+        double endY = y - 47.36 * Math.sin(14*Math.PI/180); //no clue why it should be negative
 
 
-        g.draw(new Line2D.Double(50,400,50,450)); //vertical
-        g.draw(new Line2D.Double(x, y, endX, endY)); //horizontal
+        g.draw(new Line2D.Double(50,400,50,598.12)); //vertical
+        g.draw(new Line2D.Double(x, y, endX, endY)); //
 
         //g.draw(new Line2D.Double(5, 0, 5, 1.98));
         //g.draw(new Line2D.Double(5.54,2.11,5,2.11));

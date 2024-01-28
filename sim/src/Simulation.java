@@ -110,7 +110,7 @@ public class Simulation {
     public void resetSetup()
     {
         x = 0;
-        y = 400;
+        y = 440;
 
         Vxi = getVxi(theta);
         Vyi = getVyi(theta);

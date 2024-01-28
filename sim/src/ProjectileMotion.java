@@ -3,6 +3,7 @@ package src;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.geom.AffineTransform;
 
 public class ProjectileMotion extends JPanel{
 
@@ -25,9 +26,21 @@ public class ProjectileMotion extends JPanel{
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g.setColor(Color.red);
-        ((Graphics2D) g).scale(1, 1);
+        g2.translate(300, -3400);
 
+        //AffineTransform oldAt = g2.getTransform();
+
+        //AffineTransform centerAt = new AffineTransform();
+        //centerAt.concatenate(oldAt);
+        //centerAt.translate((450), -(450));
+
+        //g2.transform(centerAt);
+        g2.scale(9.5, 9.5);
         physics.draw(g2);
+        //g2.setTransform(oldAt);
+
+
+
     }
 
 

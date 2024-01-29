@@ -67,12 +67,6 @@ public class Simulation {
     private double initialX;
     private double initialY;
     private double theta;
-    private double theta2;
-    private double theta3;
-    private double theta4;
-    private double theta5;
-    private double theta6;
-    private double theta7;
     private double velocity;
     private double xVelocity;
     private double yVelocity;
@@ -166,7 +160,7 @@ public class Simulation {
 
     public void drawOneCurve(Graphics2D g) {
         for (int i = 0; i < 10000; i++) {
-            g.fill(new Ellipse2D.Double(x, y, 3, 3));
+            g.fill(new Ellipse2D.Double(x, y, 1, 1));
             //g.fill(new Ellipse2D.Double(50, 70, 10, 10));
             time += dt;
             holdX = x;
@@ -206,7 +200,7 @@ public class Simulation {
                 g.setColor(Color.WHITE);
              */
             resetSetup();
-            theta += 10;
+            theta += 2;
         }
         /*
         drawOneCurve(g);

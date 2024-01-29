@@ -80,8 +80,6 @@ public class Simulation {
     private final double gravity = 9.81;
     private double dt;
 
-    Line2D openingLine = new Line2D.Double(initialX, initialY+8.1, 50, 374.6316);
-
     public void setup() {
         //config
         mass = 0.25;
@@ -174,7 +172,8 @@ public class Simulation {
             holdX = x;
             holdY = y;
             updateVelocityAndAcceleration();
-            if (openingLine.intersectsLine(holdX, holdY, x, y)){
+            Line2D newLine = new Line2D.Double(holdX, holdY, x, y);
+            if (newLine.intersectsLine(32, 361.6566 + 8.1, 50, 374.6316)){
                 goodPath += 1;
                 g.setColor(Color.RED);
             }

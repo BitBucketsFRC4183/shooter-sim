@@ -56,6 +56,10 @@ public class Simulation {
     double magnus_coefficient;
     double x;
     double y;
+    double holdX;
+    double holdY;
+    int goodPath;
+    int numCurves;
     double Vxi;
     double Vyi;
     double Ax;
@@ -76,6 +80,7 @@ public class Simulation {
     private final double gravity = 9.81;
     private double dt;
 
+    Line2D openingLine = new Line2D.Double(initialX, initialY+8.1, 50, 374.6316);
 
     public void setup() {
         //config
@@ -87,23 +92,25 @@ public class Simulation {
         y = 400;
         initialX = x;
         initialY = y;
+        goodPath = 0;
 
         //tune
         drag_coefficient = 0;
         magnus_coefficient = 0;
         theta = 15;
-        theta2 = 20;
-        theta3 = 25;
-        theta4 = 30;
-        theta5 = 35;
-        theta6 = 40;
-        theta7 = 45;
+        //theta2 = 20;
+        //theta3 = 25;
+        //theta4 = 30;
+        //theta5 = 35;
+        //theta6 = 40;
+        //theta7 = 65;
+        numCurves = 100; //8
 
-        velocity = 15;
+        velocity = 45;
         Vxi = getVxi(theta);
         Vyi = getVyi(theta);
         time = 0;
-        dt = 0.02;
+        dt = 0.02; //0.02
 
     }
 
@@ -117,6 +124,7 @@ public class Simulation {
         Ax = -(Math.sqrt(Vxi * Vxi + Vyi * Vyi) / mass) * (drag_coefficient * Vxi + magnus_coefficient * Vyi);
         Ay = (Math.sqrt(Vxi * Vxi + Vyi * Vyi) / mass) * (magnus_coefficient * Vxi - drag_coefficient * Vyi) + gravity;
         time = 0;
+        goodPath = 0;
     }
 
     public double getVxi(double theta) {
@@ -157,18 +165,51 @@ public class Simulation {
 
     }
 
+
     public void drawOneCurve(Graphics2D g) {
         for (int i = 0; i < 10000; i++) {
             g.fill(new Ellipse2D.Double(x, y, 3, 3));
             //g.fill(new Ellipse2D.Double(50, 70, 10, 10));
             time += dt;
+            holdX = x;
+            holdY = y;
             updateVelocityAndAcceleration();
+            if (openingLine.intersectsLine(holdX, holdY, x, y)){
+                goodPath += 1;
+                g.setColor(Color.RED);
+            }
+        }
+        /*
+        if (goodPath >= 1){
+            g.setColor(Color.RED);
+        }
+        else{
+            g.setColor(Color.WHITE);
+        }
+
+         */
+        if (goodPath == 0){
+            g.setColor(Color.WHITE);
         }
     }
 
 
 
     public void draw(Graphics2D g) {
+        for (int k = 0; k < numCurves; k++) {
+            drawOneCurve(g);
+            g.setColor(Color.WHITE);
+            /*
+            if (goodPath >= 1){
+                g.setColor(colorArray[k]);
+            }
+            else{
+                g.setColor(Color.WHITE);
+             */
+            resetSetup();
+            theta += 10;
+        }
+        /*
         drawOneCurve(g);
 
         g.setColor(Color.GREEN);
@@ -216,18 +257,24 @@ public class Simulation {
 
 
         g.setColor(Color.BLUE);
+         */
 
-        double x = 32; //20, 4.72
-        double y = 361.6566; //400, 598.12
+
+        double initialX = 32; //20, 4.72
+        double initialY = 361.6566; //400, 598.12
         double hypotenuse = 20.567;
-        double endX = x + hypotenuse * Math.cos(28.93*Math.PI/180);
-        double endY = y - hypotenuse * Math.sin(28.93*Math.PI/180); //no clue why it should be negative
+        double endX = initialX + hypotenuse * Math.cos(28.93*Math.PI/180);
+        double endY = initialY - hypotenuse * Math.sin(28.93*Math.PI/180); //no clue why it should be negative
 
 
+        g.setColor(Color.BLACK);
         g.draw(new Line2D.Double(50,374.6316,50,452.6316)); //vertical wall
-        g.draw(new Line2D.Double(x, y, endX, endY));
-        g.draw(new Line2D.Double(x, y, x, y+8.1)); //shorter vertical wall
-        g.draw(new Line2D.Double(x, y+8.1, 50, 374.6316));
+        g.setColor(Color.BLACK);
+        g.draw(new Line2D.Double(initialX, initialY, endX, endY));
+        g.setColor(Color.BLACK);
+        g.draw(new Line2D.Double(initialX, initialY, initialX, initialY+8.1)); //shorter vertical wall
+        g.setColor(Color.BLACK);
+        g.draw(new Line2D.Double(initialX, initialY+8.1, 50, 374.6316)); //opening line
 
         //g.draw(new Line2D.Double(5, 0, 5, 1.98));
         //g.draw(new Line2D.Double(5.54,2.11,5,2.11));

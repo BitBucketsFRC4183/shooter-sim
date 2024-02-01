@@ -2,6 +2,9 @@ package src;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Simulation {
 
@@ -25,6 +28,7 @@ public class Simulation {
     double initialX;
     double initialY;
     double theta;
+    List<Double> thetaList = new ArrayList<>();
     double delta_theta;
     double bestTheta;
     double velocity;
@@ -147,7 +151,8 @@ public class Simulation {
             drawOneCurve(g);
             g.setColor(Color.WHITE);
             if (goodPath >= 1){
-                bestTheta = theta;
+                thetaList.add(theta); //use if you want middle angle
+                //bestTheta = theta; //use if you want max angle
             }
             resetSetup();
             theta += delta_theta;
@@ -163,7 +168,12 @@ public class Simulation {
         g.setColor(Color.ORANGE);
         g.draw(openingLine); //opening line
 
-        System.out.println("Best theta: " + bestTheta);
+        double sum = 0;
+        for (Double aDouble : thetaList) {
+            sum += aDouble;
+        }
+        //System.out.println("Best theta: " + bestTheta);
+        System.out.println("Best theta: " + sum/thetaList.size());
         System.out.println("Current velocity: " + velocity);
         System.out.println("run!");
     }

@@ -1,47 +1,4 @@
 package src;
-
-/*
-public class Simulation{
-
-
-    private double x;
-    private double y;
-    private double initialX;
-    private double initialY;
-    private double angle;
-    private double velocity;
-    private double xVelocity;
-    private double yVelocity;
-    private double time;
-    private final double gravity = 9.81;
-
-    public void setup(){
-        x = 0;
-        y = 400;
-        initialX = x;
-        initialY = y;
-        angle = 45;
-        velocity = 80;
-        xVelocity = velocity * Math.cos(Math.toRadians(angle));
-        yVelocity = velocity * Math.sin(Math.toRadians(angle));
-        time = 0;
-    }
-
-    public void draw(Graphics2D g){
-        for(int i = 0; i < 1000; i++){
-            g.fill(new Ellipse2D.Double(x, y, 5, 5));
-            time += 0.1;
-            x = initialX + xVelocity * time;
-            y = initialY - (yVelocity * time - (gravity / 2) * time * time);
-
-        }
-
-        g.draw(new Line2D.Double(1, 5, 1, 400));
-    }
-}
-
-     */
-
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -59,20 +16,33 @@ public class Simulation {
     double holdX;
     double holdY;
     int goodPath;
+    int badPath;
     int numCurves;
     double Vxi;
     double Vyi;
     double Ax;
     double Ay;
-    private double initialX;
-    private double initialY;
-    private double theta;
-    private double velocity;
-    private double xVelocity;
-    private double yVelocity;
-    private double time;
-    private final double gravity = 9.81;
-    private double dt;
+    double initialX;
+    double initialY;
+    double theta;
+    double delta_theta;
+    double bestTheta;
+    double velocity;
+    double time;
+    final double gravity = 9.81;
+    double dt;
+
+    //ugly code below but oh well
+    double startX = 32; //20, 4.72
+    double startY = 361.6566; //400, 598.12
+    double hypotenuse = 20.567;
+    double endX = startX + hypotenuse * Math.cos(28.93*Math.PI/180);
+    double endY = startY - hypotenuse * Math.sin(28.93*Math.PI/180);
+    Line2D backSpeaker = new Line2D.Double(50,374.6316,50,452.6316);
+    Line2D topSpeaker = new Line2D.Double(startX, startY, endX, endY);
+    Line2D frontSpeaker = new Line2D.Double(startX, startY, startX, startY+8.1);
+    Line2D openingLine = new Line2D.Double(startX, startY+8.1, 50, 374.6316);
+
 
     public void setup() {
         //config
@@ -80,24 +50,20 @@ public class Simulation {
         area_cross_section = 0.4;
         note_radius = 0.1778;
         air_density = 1.225;
-        x = 0; //change
-        y = 400;
-        initialX = x;
-        initialY = y;
+        x = 0; //change,0
+        y = 400; //400
+        initialX = 0; //starting X of shooter
+        initialY = 400; //starting Y of shooter
         goodPath = 0;
+        badPath = 0;
+        bestTheta = 0;
 
         //tune
         drag_coefficient = 0;
         magnus_coefficient = 0;
         theta = 15;
-        //theta2 = 20;
-        //theta3 = 25;
-        //theta4 = 30;
-        //theta5 = 35;
-        //theta6 = 40;
-        //theta7 = 65;
-        numCurves = 100; //8
-
+        delta_theta = 8;
+        numCurves = 8; //8
         velocity = 45;
         Vxi = getVxi(theta);
         Vyi = getVyi(theta);
@@ -108,23 +74,23 @@ public class Simulation {
 
     public void resetSetup()
     {
-        x = 0;
-        y = 440;
-
+        x = initialX;
+        y = initialY;
         Vxi = getVxi(theta);
         Vyi = getVyi(theta);
         Ax = -(Math.sqrt(Vxi * Vxi + Vyi * Vyi) / mass) * (drag_coefficient * Vxi + magnus_coefficient * Vyi);
         Ay = (Math.sqrt(Vxi * Vxi + Vyi * Vyi) / mass) * (magnus_coefficient * Vxi - drag_coefficient * Vyi) + gravity;
         time = 0;
         goodPath = 0;
+        badPath = 0;
     }
 
     public double getVxi(double theta) {
-        return velocity * Math.cos(Math.toRadians(this.theta));
+        return velocity * Math.cos(Math.toRadians(theta));
     }
 
     public double getVyi(double theta) {
-        return -velocity * Math.sin(Math.toRadians(this.theta));
+        return -velocity * Math.sin(Math.toRadians(theta));
     }
 
     public double setXAcceleration(double Vxi, double Vyi){
@@ -152,143 +118,55 @@ public class Simulation {
 
             Ax = setXAcceleration(Vxi,Vyi);
             Ay = setYAcceleration(Vxi,Vyi);
-
-
-
     }
 
 
     public void drawOneCurve(Graphics2D g) {
         for (int i = 0; i < 10000; i++) {
             g.fill(new Ellipse2D.Double(x, y, 1, 1));
-            //g.fill(new Ellipse2D.Double(50, 70, 10, 10));
             time += dt;
             holdX = x;
             holdY = y;
             updateVelocityAndAcceleration();
             Line2D newLine = new Line2D.Double(holdX, holdY, x, y);
-            if (newLine.intersectsLine(32, 361.6566 + 8.1, 50, 374.6316)){
+            if (newLine.intersectsLine(frontSpeaker) || newLine.intersectsLine(topSpeaker) || newLine.intersectsLine(backSpeaker)) {
+               badPath += 1;
+            }
+            else if (newLine.intersectsLine(openingLine)) {
                 goodPath += 1;
                 g.setColor(Color.RED);
             }
         }
-        /*
-        if (goodPath >= 1){
-            g.setColor(Color.RED);
-        }
-        else{
-            g.setColor(Color.WHITE);
-        }
-
-         */
         if (goodPath == 0){
             g.setColor(Color.WHITE);
         }
     }
 
-
-
     public void draw(Graphics2D g) {
         for (int k = 0; k < numCurves; k++) {
             drawOneCurve(g);
             g.setColor(Color.WHITE);
-            /*
             if (goodPath >= 1){
-                g.setColor(colorArray[k]);
+                bestTheta = theta;
             }
-            else{
-                g.setColor(Color.WHITE);
-             */
             resetSetup();
-            theta += 2;
+            theta += delta_theta;
         }
-        /*
-        drawOneCurve(g);
+
 
         g.setColor(Color.GREEN);
-        theta = theta2;
-        resetSetup();
-
-        drawOneCurve(g);
-
-        g.setColor(Color.YELLOW);
-        theta = theta3;
-        resetSetup();
-
-        drawOneCurve(g);
-
-        g.setColor(Color.BLACK);
-        theta = theta4;
-        resetSetup();
-
-        drawOneCurve(g);
-
-        g.setColor(Color.CYAN);
-        theta = theta5;
-        resetSetup();
-
-        drawOneCurve(g);
-
-        g.setColor(Color.MAGENTA);
-        theta = theta5;
-        resetSetup();
-
-        drawOneCurve(g);
-
-        g.setColor(Color.PINK);
-        theta = theta6;
-        resetSetup();
-
-        drawOneCurve(g);
-
-        g.setColor(Color.ORANGE);
-        theta = theta7;
-        resetSetup();
-
-        drawOneCurve(g);
-
-
-
+        g.draw(backSpeaker); //vertical wall
         g.setColor(Color.BLUE);
-         */
+        g.draw(topSpeaker);
+        g.setColor(Color.YELLOW);
+        g.draw(frontSpeaker); //shorter vertical wall
+        g.setColor(Color.ORANGE);
+        g.draw(openingLine); //opening line
 
-
-        double initialX = 32; //20, 4.72
-        double initialY = 361.6566; //400, 598.12
-        double hypotenuse = 20.567;
-        double endX = initialX + hypotenuse * Math.cos(28.93*Math.PI/180);
-        double endY = initialY - hypotenuse * Math.sin(28.93*Math.PI/180); //no clue why it should be negative
-
-
-        g.setColor(Color.BLACK);
-        g.draw(new Line2D.Double(50,374.6316,50,452.6316)); //vertical wall
-        g.setColor(Color.BLACK);
-        g.draw(new Line2D.Double(initialX, initialY, endX, endY));
-        g.setColor(Color.BLACK);
-        g.draw(new Line2D.Double(initialX, initialY, initialX, initialY+8.1)); //shorter vertical wall
-        g.setColor(Color.BLACK);
-        g.draw(new Line2D.Double(initialX, initialY+8.1, 50, 374.6316)); //opening line
-
-        //g.draw(new Line2D.Double(5, 0, 5, 1.98));
-        //g.draw(new Line2D.Double(5.54,2.11,5,2.11));
-
-
+        System.out.println("Best theta: " + bestTheta);
+        System.out.println("Current velocity: " + velocity);
+        System.out.println("run!");
     }
 
 
 }
-
-    /*
-    public double calculateAngle ()
-    {
-        double v = findMagnitude(Vxi, Vyi);
-        double a = findMagnitude(Ax, Ay);
-
-        return Math.atan(1/(Math.sqrt((2* shooterCalculatorComponent.speaker_height()*gravity*gravity+gravity*v*v)/(2*a*Math.pow(v,4)+gravity*v*v))));
-    }
-
-     */
-
-
-
-

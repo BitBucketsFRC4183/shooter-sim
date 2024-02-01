@@ -67,12 +67,6 @@ public class Simulation {
     private double initialX;
     private double initialY;
     private double theta;
-    private double theta2;
-    private double theta3;
-    private double theta4;
-    private double theta5;
-    private double theta6;
-    private double theta7;
     private double velocity;
     private double xVelocity;
     private double yVelocity;
@@ -206,7 +200,7 @@ public class Simulation {
                 g.setColor(Color.WHITE);
              */
             resetSetup();
-            theta += 5;
+            theta += 2;
         }
         /*
         drawOneCurve(g);

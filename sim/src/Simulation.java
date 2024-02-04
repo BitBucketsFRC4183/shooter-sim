@@ -33,7 +33,7 @@ public class Simulation {
     double bestTheta;
     double velocity;
     double time;
-    final double gravity = 9.81;
+    final double gravity = 386.1;
     double dt;
 
     //ugly code below but oh well
@@ -46,6 +46,7 @@ public class Simulation {
     Line2D topSpeaker = new Line2D.Double(startX, startY, endX, endY);
     Line2D frontSpeaker = new Line2D.Double(startX, startY, startX, startY+8.1);
     Line2D openingLine = new Line2D.Double(startX, startY+8.1, 50, 374.6316);
+    Line2D backLine = new Line2D.Double(79.25,300,79.25,452.6316);
 
 
     public void setup() {
@@ -167,6 +168,7 @@ public class Simulation {
         g.draw(frontSpeaker); //shorter vertical wall
         g.setColor(Color.ORANGE);
         g.draw(openingLine); //opening line
+        g.draw(backLine);
 
         double sum = 0;
         for (Double aDouble : thetaList) {
